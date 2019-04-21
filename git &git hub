@@ -1,0 +1,250 @@
+Git 入门
+
+教学链接
+
+- 不可用Windows自带记事本，用notepad++,并且 默认编码为UTF-8 without BOM.
+- 保存在learngit下，
+如果fatal为pathspec 'readme.txt' did not match any files 输入命令touch xx.txt
+如果fatal： Not a git repository (or any of the parent directories): .git 解决链接
+
+把文件添加到版本库
+
+- 用notepad++编写一个readme.txt文档放在learngit目录下。
+- 内容为Git is a version control system.
+    Git is free software.
+- 输入命令 $ git add readme.txt(把文件提交到仓库)
+- 输入命令git commit -m""这里是注释"。
+执行成功后会告诉你，"1 file changed"即一个文件被改动；"2 insertions"即插入了两行内容。
+ps：add可以使用多次,commit可以一键添加多个文件a
+！注解
+ps:插入图片方法
+
+- 输入命令 git status让我们掌握仓库当前的状态
+- 输入命令git diff xxx.txt了解修改了什么
+- 提交修改的新文件
+git add git status git commit git status
+- git status 方便我们掌握工作区状态
+
+查看历史纪录
+
+- git log
+- if feel 太多参数，则git log  --pretty=oneline
+
+将文档退回上一个版本
+
+- git reset  --hard HEAD^
+ps：上个版本HEAD^,上上则HEAD^^
+100则HEAD~100
+- 看看是不是上一个版本'cat xx.txt
+- 用git log 发现最新的没有了，用git reset--hard commit id( 胡汉三又回来，时间原因就不找图片了ovo，开始顺利)
+*hard 是指针ovo，指向不同版本，你要选择哪个就指哪个。
+- 如果忘记版本号了，那么就用 git reflog
+
+
+
+---
+
+在工作区也就是learngit中添加一个文件，
+并对readme。txt再一次修改
+命令git status会出现Untracked也就是新文件没有被添加到版本库过。
+git add 将修改放入暂存区，没有放入暂存区，则修改不会被提交。
+
+---
+
+管理修改
+
+git checkout -- xxx。txt可以丢弃工作区的修改。
+
+1. 如果文档修改后并未放到暂存区，那么撤销修改就会回到版本库一模一样的状态；
+2. 已经添加到暂存区后，有做了修改，那么就会回到添加到 暂存区后的状态。
+
+---
+
+撤销修改
+
+如果添加到了暂存区，则git reset HEAD < xx.txt>
+将暂存区的修改撤销掉，重新放回工作区。然后再修改工作区。
+
+---
+
+删除文件
+
+- rm xx.txt
+- 工作区的删除了，版本库的可以用 git rm删除，并且 要提交，commit
+- 删除工作区，发现删错了，那么就可以用git checkout -- test.txt恢复。
+其实就是用版本库里的替代工作区的
+
+---
+
+建立远程仓库了ovo
+
+- github   add "create a new repo"
+- name "learngit"
+- 按照github的提示建立联系
+- 提交地址不同于提示，应改为$ git remote add origin git@github.com:changanlj/learngit.git
+出现"remote  origin already exists."
+first,"git remote rm origin"
+then,"git........"
+help 
+- 之后只要本地做了提交，就可以通过命令'git push origin master' ,将master分支最新修改推送至GitHub，好了初步建成分布式版本库。
+
+#小节
+
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+
+分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！
+
+---
+
+克隆仓库
+
+- 输入命令“git clone  +adress"克隆到本地库。
+- 可用”cd 仓库“
+”ls“查看文件
+
+---
+
+创建分支dev（branch）
+
+- 在仓库目录下open bash
+- 创建分支”git checkout -b dev"
+- "git branch can research all branches
+and will show the branch in now
+*then 就可以在dev这个分支下进行提交了 
+- 然后提交修改完成，切回到master分支
+"git checkout master"
+- 查看发现master没有文件修改的记录
+- 这时将dev的工作成果合并到master上
+"git merge dev"即将指定分支合并到当前分支
+- 合并完之后就可以选择删除dev分支了。"git branch -d dev"
+
+ps:git checkout -b dev     = git branch dev +git checkout dev 即创建加上切换分支
+
+- 当两个分支都提交修改，使用合并命令会有概率出错
+*git merge feature1 出现错误
+*git diff
+*修改当前分支文件，提交
+- 使用”git log --graph"可以查看分支的合并情况。
+*删除f分支
+*创建一个新的分支
+- 修改文件，提交，切换分支
+*合并，使用命令'git merge - -no-ff -m "merge with no-ff" dev"
+- 显示“recursive" 即无法使用 faster forward
+because 本次合并要创建一个新的commit，所以要备足”-m'
+
+
+
+using "--no-ff"有合并历史，用fast forward没有
+
+---
+
+Bug分支
+
+- 当分支没完成提交（commit），但是需要修复一些bug，假设bug代号为101，用stash功能将进度暂时储存。
+- 其次确定在哪条分支上修复bug，就在哪条分支上创建新的分支。
+以master为例
+git checkout master
+git checkout -b issue-101
+假设要把“Git is free software....."改为"Git is a free....."提交
+重新指向master，合并并删除 issue-101
+
+- 切换为dev，但是git status 之后发现并没有修改痕迹，那么就要用'git stash list'查看
+- 那么就要恢复了，有两种方法
+1.'git stash apply'   恢复 and  ‘git stash drop’ 删除stash内容
+
+2."git stash pop"
+
+- 这时就"git stash list "就没有记录了。
+*恢复 status ，用命令"git stash apply stash@{0}"
+
+---
+
+Feature 分支
+
+当你准备添加一个新功能时，在分支上实验，再合并到主分支，所以就需要feature分支。
+
+- 假设现在你要开发一个代号为Vulcan的新功能，该功能计划用于下一代星际飞船。(好牛逼啊)
+- 创立分支 feature-vulcan
+- 切换到dev，然后合并
+- 但是突然要求删除新功能，但是分支这时就要用"git branch -D feature-vulcan"强制消除。
+
+---
+
+多人协作
+
+当你从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了。
+
+- 远程仓库的默认名称是origin。
+- 要查看远程库的信息，用git remote
+用"git remote -v"显示更详细的信息。
+将会显示可以抓取和推送的origin的地址，如果没有推送权限，就看不到push的地址。
+
+推送分支
+
+就是把该分支上的所有提交推送到远程库。推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上
+
+git push origin master
+如果要推送其他分支
+git push origin dev
+
+- but 不是所有的分支都要推送
+master分支是主分支，要时刻与远程同步；
+dev分支是开发分支，团队所有的成员都需要在上面工作，也需要同步
+bug分支只用于在本地修复bug，就没必要推送到远程了，除非需要查看修复了几个bug
+feature分支是否推送，要看你的workmates是否在上面合作开发。
+
+抓取分支
+
+假设一个mate在另一个电脑或者同一台电脑的不同目录下克隆。
+
+- git clone git@gijthub.com:changanlj/learngit.git
+
+一般情况下他只能看到master（可以用git branch查看）
+
+- git push origin dev
+- 当他要在dev分支上开发，就必须创建远程origin的dev分支到本地，于是使用命令“git checkout -b dev origin/dev
+- then he can 在dev上继续修改，然后把dev分支push到远程，'git add   txt'     &   "git commit "  
+&"git push origin dev"即需要的分支
+
+*当你与朋友都对同一个文件做了修改，那么在你进行推送时，可能会失败。
+
+- 这时推送失败，因为你的小伙伴的最新提交和你试图推送的提交有冲突，解决办法也很简单，Git已经提示我们，先用git pull把最新的提交从origin/dev抓下来，然后，在本地合并，解决冲突，再推送;git pull
+*git pull也失败了，原因是没有指定本地dev分支与远程origin/dev分支的链接，根据提示，设置dev和origin/dev的链接：$ git branch --set-upstream-to=origin/dev dev
+then git pull
+*这回git pull成功，但是合并有冲突，需要手动解决，解决的方法和分支管理中的解决冲突完全一样。解决后，提交，再push：
+具体！result
+
+Rebase
+
+push之后， git log分支太杂乱，然后远程，修改，提交，pull，之后用git rebase,finally push
+
+---
+
+标签管理（tag）
+
+与commit 代号相连接，更为直观
+
+- 切换到相应的分支上
+*git tag xx
+*research   "git tag"
+默认标签是打在最新提交的commit上的。有时候，如果忘了打标签，比如，现在已经是周五了，但应该在周一打的标签没有打，怎么办？
+方法是找到历史提交的commit id，然后打上就可以了：
+
+- git log --pretty=oneline --abbrev-commit
+查看历史纪录
+- then"git tag xx commit id"
+- 标签是按照字母排序的，用git show <tagname>查看
+- "-a"指定标签名，”-m"指定备注。
+
+#操作标签
+
+- 标签打错了，删除
+git tag -d v0.1
+因为创建的标签值存储在本地，不会自动推送到远程，所以错误的标签可以在本地安全删除。
+- 如果要推送某个标签到远程，使用命令git push origin <tagname>：
+或者一次性推送全部的本地标签。git push origin --tags
+- 如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除,git tag -d;
+*然后，从远程删除。删除命令也是push，但是格式如下：git push origin :refs/tags/v0.9
